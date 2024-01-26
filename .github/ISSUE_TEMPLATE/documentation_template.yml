@@ -1,0 +1,15 @@
+name: Documentation Fixes
+description: Please let us know if you have identified any errors pertaining to ROCm or its components.
+title: "[Documentation]: "
+
+body:
+- type: textarea
+  attributes:
+    label: Description of errors
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Please attach any screenshots or additional evidence you think will be helpful.
+  validations:
+    required: false
