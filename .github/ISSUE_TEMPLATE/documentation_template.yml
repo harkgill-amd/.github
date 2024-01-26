@@ -1,7 +1,6 @@
 name: Documentation Fixes
-description: Please let us know if you have identified any errors pertaining to ROCm or its components.
+description: Documentation errors can be reported here.
 title: "[Documentation]: "
-
 body:
 - type: textarea
   attributes:
@@ -10,6 +9,6 @@ body:
     required: true
 - type: textarea
   attributes:
-    label: Please attach any screenshots or additional evidence you think will be helpful.
+    label: Attach any links, screenshots, or additional evidence you think will be helpful.
   validations:
     required: false
