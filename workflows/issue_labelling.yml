@@ -1,0 +1,89 @@
+name: "Main Workflow for Labeling and Adding to Project"
+
+on:
+  workflow_call:
+    inputs:
+      issue_number:
+        description: "The issue number to process"
+        required: true
+        type: string
+      issue_title:
+        description: "The title of the issue"
+        required: true
+        type: string
+      issue_body:
+        description: "The body content of the issue"
+        required: true
+        type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+
+jobs:
+  label_and_add_to_project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Label issue based on content
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = inputs.issue_number;
+            const issueTitle = inputs.issue_title;
+            const issueBody = inputs.issue_body;
+            const labelsToAdd = [];
+
+            if (issueTitle.includes("WSL") || issueBody.includes("WSL")) {
+              labelsToAdd.push("ROCm on WSL");
+            }
+            if (issueTitle.includes("MI") || issueBody.includes("MI")) {
+              labelsToAdd.push("Instinct");
+            }
+            if (issueTitle.includes("documentation") || issueBody.includes("documentation")) {
+              labelsToAdd.push("Documentation");
+            }
+
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                labels: labelsToAdd
+              });
+              console.log(`Added labels: ${labelsToAdd.join(", ")}`);
+            } else {
+              console.log("No relevant labels found.");
+            }
+
+      - name: Add issue to project
+        env:
+          PROJECT_ID: "1" 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue_number=${{ inputs.issue_number }}
+          project_id=${PROJECT_ID}
+
+          # Retrieve node ID of the issue
+          issue_node_id=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $number: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $number) {
+                  id
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" -f number="${issue_number}" --jq '.data.repository.issue.id')
+
+          gh api graphql -f query='
+            mutation($projectId: ID!, $contentId: ID!) {
+              addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                item {
+                  id
+                }
+              }
+            }' -f projectId="${project_id}" -f contentId="${issue_node_id}"
