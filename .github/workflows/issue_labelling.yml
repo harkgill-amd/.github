@@ -31,9 +31,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const issueNumber = inputs.issue_number;
-            const issueTitle = inputs.issue_title;
-            const issueBody = inputs.issue_body;
+            const issueNumber = "${{ inputs.issue_number }}";
+            const issueTitle = "${{ inputs.issue_title }}";
+            const issueBody = "${{ inputs.issue_body }}";
             const labelsToAdd = [];
 
             if (issueTitle.includes("WSL") || issueBody.includes("WSL")) {
