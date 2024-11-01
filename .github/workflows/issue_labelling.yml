@@ -28,12 +28,16 @@ jobs:
 
       - name: Label issue based on content
         uses: actions/github-script@v6
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_TITLE: ${{ inputs.issue_title }}
+          ISSUE_BODY: ${{ inputs.issue_body }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const issueNumber = "${{ inputs.issue_number }}";
-            const issueTitle = "${{ inputs.issue_title }}";
-            const issueBody = "${{ inputs.issue_body }}";
+            const issueNumber = process.env.ISSUE_NUMBER;
+            const issueTitle = process.env.ISSUE_TITLE;
+            const issueBody = process.env.ISSUE_BODY;
             const labelsToAdd = [];
 
             if (issueTitle.includes("WSL") || issueBody.includes("WSL")) {
