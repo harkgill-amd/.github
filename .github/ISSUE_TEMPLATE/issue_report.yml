@@ -62,9 +62,9 @@ body:
     label: Installation Method
     description: How did you install ROCm?
     options:
-      - Python wheels (pip)
-      - Package manager (apt / dnf / yum / zypper)
-      - Tarball / archive
+      - Python wheels
+      - Package manager
+      - Tarball
       - Built from source
       - Other (describe in Additional Information)
   validations:
@@ -75,10 +75,8 @@ body:
     description: |
       Paste the output of the command matching your installation method above. This inventory of installed component versions is critical for triage.
 
-      - Python wheels (pip): `pip freeze`
-      - Package manager (apt): `apt list --installed 2>/dev/null | grep -iE "rocm|hip|amdgpu"`
-      - Package manager (rpm): `rpm -qa | grep -i rocm`
-      - Tarball / source: `cat /opt/rocm/.info/version*`
+      - Python wheels: `pip freeze`
+      - Package manager: `apt list --installed 2>/dev/null | grep -iE "rocm|hip|amdgpu"` (use the equivalent for your package manager, e.g. `rpm -qa` on dnf/zypper systems)
     value: |
       <details>
       <summary>Installed ROCm packages / versions</summary>
